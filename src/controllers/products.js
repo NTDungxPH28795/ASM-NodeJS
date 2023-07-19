@@ -1,8 +1,15 @@
 import Product from "../models/Product"
+import productValidator from "../validations/products"
 
 export const create = async( req, res)=>{
     try{
+        const {error} = productValidator.validate(req.body)
 
+        if(error){
+            return res.status(400).json({
+                message: error.details[0].message,
+            })
+        }
         const data = await Product.create(req.body)
         if(!data){
             return res.status(404).json({
@@ -79,6 +86,14 @@ export const remove = async( req, res)=>{
 }
 export const update = async( req, res)=>{
     try{
+
+        const {error} = productValidator.validate(req.body)
+
+        if(error){
+            return res.status(400).json({
+                message: error.details[0].message,
+            })
+        }
 
         const data = await Product.findByIdAndUpdate(req.params.id, req.body, {new: true})
         if(!data){
